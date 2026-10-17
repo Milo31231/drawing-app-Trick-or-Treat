@@ -7,29 +7,43 @@ const closePopup = () => {
     outer.style.display = "none";
 }
 
+const openPopup = () => {
+    var popup = document.querySelector("#onstart-popup");
+    var outer = document.querySelector("#outer-popup");
+    if (popup) popup.style.display = "block";
+    if (outer) outer.style.display = "block";
+}
+
 //creating a canvas
 const createCanvas = () =>{
         const canvasDiv = document.querySelector("#canvasDiv");
         const canvas = document.createElement('canvas');
         const clearBtn=document.getElementById('clear');
         const saveBtn = document.getElementById('save');
+        const paletteBtn = document.getElementById('palette');
         const blackBtn = document.querySelector('div[data-color="black"]');
         const greenBtn = document.querySelector('div[data-color="green"]');
         const blueBtn = document.querySelector('div[data-color="blue"]');
         const purpleBtn = document.querySelector('div[data-color="purple"]');
         const redBtn = document.querySelector('div[data-color="red"]');
+        const OrangeBtn = document.querySelector('div[data-color="Orange"]');
+        const DarkGreenBtn = document.querySelector('div[data-color="Dark-Green"]');
+        const whiteBtn = document.querySelector('div[data-color="white"]');
+
         let canvasHeight = window.innerHeight-100;
         let canvasWidth  = window.innerWidth-100;
         var clickX = new Array();
         var clickY = new Array();
         var clickDrag = new Array();
+        var clickColor = new Array(); 
         var paint;
         var color = '#000000';
-
-        clearBtn.addEventListener('click', function(e){
+        paletteBtn.addEventListener('click', openPopup);
+        clearBtn.addEventListener('click', function(e){      
                 context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
                 clickX=[];
                 clickY=[];
+                clickColor=[];
                 clickDrag=[];
                 paint=false;
         });
@@ -72,8 +86,30 @@ const createCanvas = () =>{
                       color = "#000000";
                       closePopup();
                       break;
+                    case 'Orange':
+                      color = "#fca901";
+                      closePopup();
+                      break;
+                    case 'Dark-Green':
+                      color = "#006400";
+                      closePopup();
+                      break;
+                    case 'white':
+                      color = "#ffffff";
+                      closePopup();
+                      break;
                   }
                 }
+
+
+
+
+
+
+
+
+
+
 
                 // add click listener for all color options in welcome modal
                 blackBtn.addEventListener('click', (event) => selectColor(event.target.dataset.color));
@@ -81,19 +117,23 @@ const createCanvas = () =>{
                 greenBtn.addEventListener('click', (event) => selectColor(event.target.dataset.color));
                 purpleBtn.addEventListener('click', (event) => selectColor(event.target.dataset.color));
                 redBtn.addEventListener('click', (event) => selectColor(event.target.dataset.color));
+                OrangeBtn.addEventListener('click', (event) => selectColor(event.target.dataset.color));
+                DarkGreenBtn.addEventListener('click', (event) => selectColor(event.target.dataset.color));
+                whiteBtn.addEventListener('click', (event) => selectColor(event.target.dataset.color));
+
 
                 function addClick(x, y, dragging)
                 {
                   clickX.push(x);
                   clickY.push(y);
                   clickDrag.push(dragging);
+                  clickColor.push(color);
                 }
 
                 function redraw(){
                         context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
                         context.fillStyle="#fff";
                         context.fillRect(0,0,context.canvas.width, context.canvas.height);
-                        context.strokeStyle = color;
                         context.lineJoin = "round";
                         context.lineWidth = 5;
                                               
@@ -106,6 +146,7 @@ const createCanvas = () =>{
                            }
                            context.lineTo(clickX[i], clickY[i]);
                            context.closePath();
+                           context.strokeStyle = clickColor[i];
                            context.stroke();
                         }
                       }

@@ -20,7 +20,7 @@ body{
     text-align: center;
 }
 
-#clear , #save {
+#clear , #save , #palette {
     line-height: 20px;
     border-radius:8px;
     text-align: center;
@@ -56,7 +56,7 @@ body{
     top: 50px;
     display: block;
     width: 70%;
-    max-width: 400px;
+    max-width: 800px;
     left: 0;
     right: 0;
     margin: auto;
@@ -100,3 +100,6 @@ body{
 [data-color=blue] {background-color:#006eff !important}
 [data-color=green] {background-color:#baff33 !important}
 [data-color=purple] {background-color:#b700ff !important}
+[data-color=Orange] {background-color:#fca901 !important}
+[data-color=Dark-Green] {background-color:#006400 !important}
+[data-color=white] {background-color:#ffffff !important}
