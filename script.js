@@ -36,8 +36,45 @@ const createCanvas = () =>{
         var clickY = new Array();
         var clickDrag = new Array();
         var clickColor = new Array(); 
+        var clickSize = new Array();
         var paint;
         var color = '#000000';
+        var curSize = 5;
+        const sizeSlider = document.getElementById('brushSize');
+        const sizeDisplay = document.getElementById('brushSizeDisplay');
+
+        if (sizeSlider) {
+        sizeSlider.addEventListener('input', (e) => {
+        curSize = Number(e.target.value);
+        if (sizeDisplay) sizeDisplay.innerText = `${curSize}px`;
+  });
+}
+let currentTool = 'brush'; // 'brush' or 'stamp'
+let stamps = []; // Stores placed stamps
+
+const toolModeBtn = document.getElementById('toolSelect');
+const stampPicker = document.getElementById('stampSelect');
+
+if (toolModeBtn && stampPicker) {
+  toolModeBtn.addEventListener('click', () => {
+    if (currentTool === 'brush') {
+      currentTool = 'stamp';
+      toolModeBtn.innerText = `Mode: ${stampPicker.value} Stamp`;
+      toolModeBtn.style.background = '#9900ff';
+    } else {
+      currentTool = 'brush';
+      toolModeBtn.innerText = 'Mode: 🖌️ Brush';
+      toolModeBtn.style.background = '#ff006f';
+    }
+  });
+
+  stampPicker.addEventListener('change', () => {
+    if (currentTool === 'stamp') {
+      toolModeBtn.innerText = `Mode: ${stampPicker.value} Stamp`;
+    }
+  });
+}
+
         paletteBtn.addEventListener('click', openPopup);
         clearBtn.addEventListener('click', function(e){      
                 context.clearRect(0, 0, context.canvas.width, context.canvas.height);
@@ -45,6 +82,8 @@ const createCanvas = () =>{
                 clickY=[];
                 clickColor=[];
                 clickDrag=[];
+                clickSize=[];
+                stamps = []; // Clear stamps as well
                 paint=false;
         });
 
@@ -115,29 +154,41 @@ const createCanvas = () =>{
           clickY.push(y);
           clickDrag.push(dragging);
           clickColor.push(color);
+          clickSize.push(curSize);
         }
 
-        function redraw(){
-          context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-          context.fillStyle="#fff";
-          context.fillRect(0,0,context.canvas.width, context.canvas.height);
-          context.lineJoin = "round";
-          context.lineWidth = 5;
-                                
-          for(var i=0; i < clickX.length; i++) {		
-            context.beginPath();
-            if(clickDrag[i] && i){
-              context.moveTo(clickX[i-1], clickY[i-1]);
-            }else{
-              context.moveTo(clickX[i]-1, clickY[i]);
-            }
-            context.lineTo(clickX[i], clickY[i]);
-            context.closePath();
-            context.strokeStyle = clickColor[i];
-            context.stroke();
-          }
-        }
-              
+        // idk why this is here but it works so im not touching it
+          function redraw(){
+  context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+  context.fillStyle = "#fff";
+  context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+  context.lineJoin = "round";
+  context.lineCap = "round";
+                
+  // 1. Draw brush strokes
+  for(var i = 0; i < clickX.length; i++) {		
+    context.beginPath();
+    if(clickDrag[i] && i){
+      context.moveTo(clickX[i-1], clickY[i-1]);
+    } else {
+      context.moveTo(clickX[i]-1, clickY[i]);
+    }
+    context.lineTo(clickX[i], clickY[i]);
+    context.closePath();
+    context.strokeStyle = clickColor[i];
+    context.lineWidth = clickSize[i];
+    context.stroke();
+  }
+
+  // 2. Draw all stamps
+  for(var s = 0; s < stamps.length; s++) {
+    context.font = `${stamps[s].size}px sans-serif`;
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.fillText(stamps[s].emoji, stamps[s].x, stamps[s].y);
+  }
+}
+           
         saveBtn.addEventListener('click',()=>{
           var dataURL = canvas.toDataURL('image/jpeg', 1.0);
           let savedImg = document.getElementById('savedImg');
@@ -148,7 +199,17 @@ const createCanvas = () =>{
           if (window.isOsuMode) return;
           var mouseX = e.pageX - this.offsetLeft;
           var mouseY = e.pageY - this.offsetTop;
-                        
+
+          if (currentTool === 'stamp') {
+            stamps.push({
+              x: mouseX,
+              y: mouseY,
+              emoji: stampPicker.value || '🎃', // Default to pumpkin if no value
+              size: Math.max(curSize * 3, 24)
+            });
+            redraw();
+            return; // Exit early since we don't want to draw a brush stroke
+          }
           paint = true;
           addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop);
           redraw();
@@ -177,8 +238,8 @@ let startTime = 0;
 let hitObjects = [];
 let osuMouse = { x: 0, y: 0 };
 
-const CIRCLE_RADIUS = 38;
-const PREEMPT = 600;
+const CIRCLE_RADIUS = 48;
+const PREEMPT = 550;
 const HIT_WINDOW = 180;
 const COUNTDOWN_TOTAL = 3500;
 const GAME_SPEED = 1;

@@ -6,17 +6,39 @@
   </head>
 
   <body>
-    <!--CODE TO BE WRITTEN HERE--->
     <!--creating a div for canvas where drawing is to be made-->
     <div id="canvasDiv"></div>
    
     <div class="button-bars">
-      <button id="clear">CLEAR</button>
+      <button id="clear">CLEAR</button> 
       <button id="save">SAVE</button>
       <button id="palette">palette</button>
+
+     <!-- Tool Mode Toggle (Brush vs Stamp) -->
+<button id="toolSelect" type="button" style="background:#ff006f; color:#ffffff; font-weight:bold; border-radius:8px; padding:5px 12px; margin:5px; cursor:pointer;">
+  Mode: 🖌️ Brush
+</button>
+
+<!-- Stamp Selector Dropdown -->
+<select id="stampSelect" style="padding: 5px; border-radius: 6px; font-size: 14px; margin-right: 5px;">
+  <option value="🎃">🎃 Pumpkin</option>
+  <option value="⭐">⭐ Star</option>
+  <option value="❤️">❤️ Heart</option>
+  <option value="👻">👻 Ghost</option>
+  <option value="🔥">🔥 Fire</option>
+</select>
+
+      <!-- Brush size slider -->
+      <label for="brushSize" style="font-weight: bold; margin-left: 10px;">Size: </label>
+      <input type="range" id="brushSize" min="1" max="50" value="5">
+      <span id="brushSizeDisplay">5px</span>
+      
+      <!-- Osu surprise button (properly closed) -->
       <button id="osu-btn" style="background:#ff6a00; color:#1a0026; font-weight:bold; border-radius:8px; padding:5px 12px; margin:10px; cursor:pointer;">
-    🎃 Click Me For A Suprise!!!!
+        🎃 Click Me For A Suprise!!!!
+      </button>
     </div>
+
     <div id="img-container">
       <img id="savedImg" alt="saved picture" src="" />
     </div>
@@ -43,7 +65,7 @@
       </section>
       <div onclick="closePopup()">&times;</div>
     </div>
-  </body>
 
-  <script src="script.js"></script>
+    <script src="script.js"></script>
+  </body>
 </html>
